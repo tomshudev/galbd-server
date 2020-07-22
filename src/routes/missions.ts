@@ -8,8 +8,7 @@ const router = express.Router();
 router.get("/", (req, res) => {
   getAllMisions().then(
     (missions) => {
-      res.write(JSON.stringify({ success: true, missions }, null, 2));
-      res.end();
+      res.json({ success: true, missions });
     },
     (err) => {
       res.json({
