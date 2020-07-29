@@ -49,6 +49,24 @@ router.get("/solved", (req, res) => {
   );
 });
 
+router.get("/waitingForApproval", (req, res) => {
+  getAllMisions().then(
+    (missions) => {
+      let waitingForApproval = missions.filter(
+        (mission) => mission.isWaitingForApproval
+      );
+
+      res.json({ success: true, missions: waitingForApproval });
+    },
+    (err) => {
+      res.json({
+        success: false,
+        message: `Failed to fetch waiting for approval missions. Error: ${err}`,
+      });
+    }
+  );
+});
+
 String.prototype["replaceAt"] = function (index, replacement) {
   return (
     this.substr(0, index) +
@@ -58,7 +76,7 @@ String.prototype["replaceAt"] = function (index, replacement) {
 };
 
 router.get("/currProgress", (req, res) => {
-  let nz: any = "__.______,__.______";
+  let nz: any = "__._____,__._______";
 
   getAllMisions().then((missions) => {
     let solved = missions.filter((mission) => mission.isSolved);
@@ -82,20 +100,42 @@ router.post("/missionSolved", (req, res) => {
   });
 });
 
+router.post("/connectPhoto", (req, res) => {
+  getMissionById(req.body.id).then((mission) => {
+    let newMission = {
+      ...mission._doc,
+      data: {
+        imageUri: req.body.uri,
+      },
+    };
+
+    updateMission(newMission, res);
+  });
+});
+
+router.post("/update", (req, res) => {
+  updateMission(req.body.mission, res);
+});
+
 router.post("/sendMissionForAproval", (req, res) => {
-  updateApprovalStatus(req.body.id, false, res);
+  updateApprovalStatus(req.body.id, true, false, res);
 });
 
 router.post("/approve", (req, res) => {
-  updateApprovalStatus(req.body.id, req.body.isApproved, res);
+  updateApprovalStatus(req.body.id, false, req.body.isApproved, res);
 });
 
-function updateApprovalStatus(id: string, isApproved: boolean, res) {
+function updateApprovalStatus(
+  id: string,
+  isWaitingForApproval: boolean,
+  isApproved: boolean,
+  res
+) {
   getMissionById(id).then((mission) => {
     let newMission = {
       ...mission._doc,
-      isApproved: isApproved,
       isSolved: isApproved,
+      isWaitingForApproval: isWaitingForApproval,
     };
 
     updateMission(newMission, res);

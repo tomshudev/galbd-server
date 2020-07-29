@@ -1,5 +1,6 @@
 import { config } from "../environment/config";
 import { gfs } from "..";
+import { v4 as uuid } from "uuid";
 
 const express = require("express");
 const router = express.Router();
@@ -11,15 +12,16 @@ const storage = new GridFsStorage({
   url: config.database,
   file: (req, file) => {
     const match = ["image/png", "image/jpeg"];
+    let imageID: string = uuid();
 
     if (match.indexOf(file.mimetype) === -1) {
-      const filename = `${Date.now()}-galbd-${file.originalname}`;
+      const filename = `galbd-${imageID}.png`;
       return filename;
     }
 
     return {
       bucketName: "images",
-      filename: `${Date.now()}-galbd-${file.originalname}`,
+      filename: `galbd-${imageID}.png`,
     };
   },
 });

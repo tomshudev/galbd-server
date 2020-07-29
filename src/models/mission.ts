@@ -12,6 +12,7 @@ const missionSchema = new Schema({
   digitPrizeLocation: { type: Number, required: true },
   doesMissionNeedsApproval: { type: Boolean, required: false },
   isApproved: { type: Boolean, required: false },
+  isWaitingForApproval: { type: Boolean, required: false },
 });
 
 export const missionModel = mongoose.model("Mission", missionSchema);

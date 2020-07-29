@@ -5,5 +5,5 @@ export interface Config {
 
 export const config: Config = {
   port: 3000,
-  database: "mongodb://tom:123456@3.128.94.248/galbd_db",
+  database: "mongodb://tom:123456@3.22.240.21/galbd_db",
 };
